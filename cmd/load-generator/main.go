@@ -6,8 +6,9 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"runtime"
-	"syscall"
 	"unsafe"
+
+	sys "golang.org/x/sys/unix"
 )
 
 var ready = make(chan struct{})
@@ -50,9 +51,9 @@ func setPrName(name string) error {
 	bytes := append([]byte(name), 0)
 	ptr := unsafe.Pointer(&bytes[0])
 
-	_, _, errno := syscall.RawSyscall6(syscall.SYS_PRCTL, syscall.PR_SET_NAME, uintptr(ptr), 0, 0, 0, 0)
+	_, _, errno := sys.RawSyscall6(sys.SYS_PRCTL, sys.PR_SET_NAME, uintptr(ptr), 0, 0, 0, 0)
 	if errno != 0 {
-		return syscall.Errno(errno)
+		return sys.Errno(errno)
 	}
 	return nil
 }
