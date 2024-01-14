@@ -20,14 +20,14 @@ install via [docker](https://hub.docker.com/r/ncabatoff/process-exporter/).
 
 Usage:
 
-```
-  process-exporter [options] -config.path filename.yml
+```bash
+process-exporter [options] -config.path filename.yml
 ```
 
 or via docker:
 
-```
-  docker run -d --rm -p 9256:9256 --privileged -v /proc:/host/proc -v `pwd`:/config ncabatoff/process-exporter --procfs /host/proc -config.path /config/filename.yml
+```bash
+docker run -d --rm -p 9256:9256 --privileged -v /proc:/host/proc -v `pwd`:/config ncabatoff/process-exporter --procfs /host/proc -config.path /config/filename.yml
 
 ```
 
@@ -318,7 +318,7 @@ The extra label `state` can have these values: `Running`, `Sleeping`, `Waiting`,
 
 ## Group Thread Metrics
 
-Since publishing thread metrics adds a lot of overhead, use the `-threads` command-line argument to disable them, 
+Since publishing thread metrics adds a lot of overhead, use the `-threads` command-line argument to disable them,
 if necessary.
 
 All these metrics start with `namedprocess_namegroup_` and have at minimum
@@ -367,16 +367,18 @@ minimal: each time a scrape occurs, it will parse of /proc/$pid/stat and
 
 ## Dashboards
 
-An example Grafana dashboard to view the metrics is available at https://grafana.net/dashboards/249
+An example Grafana dashboard to view the metrics is available at https://grafana.com/grafana/dashboards/249-named-processes/
 
 ## Building
 
-Requires Go 1.13 installed.
+Requires Go 1.21 installed.
 ```
 make
 ```
 
 ## Exposing metrics through HTTPS
+
+Process exporter supports TLS and basic auth through using the --web.config.file format described below and in the [exporter-toolkit repository](https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md).
 
 web-config.yml
 ```
@@ -386,8 +388,10 @@ tls_server_config:
   cert_file: server.crt
   key_file: server.key
 ```
+
 Running
 ```
+
 $ ./process-exporter -web.config.file web-config.yml &
 $ curl -sk https://localhost:9256/metrics | grep process
 
